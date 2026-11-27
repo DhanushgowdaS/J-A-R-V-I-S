@@ -18,15 +18,26 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm install
+      - uses: actions/configure-pages@v5
+      - run: npm ci || npm install
         working-directory: frontend
       - run: npm run build
         working-directory: frontend
+      - name: Verify built site is the J-A-R-V-I-S app
+        run: |
+          test -f frontend/dist/index.html
+          grep -q 'J-A-R-V-I-S personal AI assistant interface' frontend/dist/index.html
+          test -d frontend/dist/assets
+          ls -lah frontend/dist
       - uses: actions/upload-pages-artifact@v3
         with:
           path: frontend/dist
