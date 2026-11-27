@@ -1,0 +1,33 @@
+import React, { useState } from 'react';
+import { createRoot } from 'react-dom/client';
+import { Activity, AudioLines, Brain, CalendarDays, ChevronDown, Circle, Folder, Grid2X2, History, Mail, MessageSquare, Mic, Network, Plug, Plus, Settings2, User, Workflow, Globe, FileText, Youtube, Instagram, Linkedin, Facebook, Send, Paperclip, PanelLeft, Search, Bell, Monitor, Zap, CircleHelp } from 'lucide-react';
+import './styles.css';
+
+const nav = [
+ {label:'NETWORK',icon:Network},{label:'DASHBOARD',icon:Grid2X2},{label:'TALK',icon:AudioLines},{label:'WORKFLOWS',icon:Workflow},
+ {label:'FILES',icon:Folder},{label:'CONNECTIONS',icon:Plug},{label:'ASSISTANT',icon:Settings2},{label:'ACCOUNT',icon:User}
+];
+const nodes = [
+ {name:'Reddit',icon:MessageSquare,x:43,y:8},{name:'Gmail',icon:Mail,x:61,y:8,active:true,badge:3},
+ {name:'Voice',icon:AudioLines,x:51,y:23,active:true,badge:7},{name:'Google Calendar',icon:CalendarDays,x:77,y:19,active:true},
+ {name:'Facebook',icon:Facebook,x:29,y:19},{name:'Web',icon:Globe,x:34,y:39,active:true},{name:'Chat',icon:MessageSquare,x:68,y:39,active:true},
+ {name:'Google Drive',icon:Folder,x:86,y:35,active:true},{name:'Twitter',icon:CircleHelp,x:18,y:35},
+ {name:'LinkedIn',icon:Linkedin,x:18,y:56},{name:'Files',icon:Folder,x:40,y:64,active:true,badge:2},
+ {name:'Memory',icon:Brain,x:61,y:64,active:true,badge:7},{name:'Google Docs',icon:FileText,x:86,y:55,active:true,badge:4},
+ {name:'Instagram',icon:Instagram,x:27,y:75},{name:'YouTube',icon:Youtube,x:43,y:84},
+ {name:'Notion',icon:Network,x:61,y:84,active:true},{name:'Google Sheets',icon:Grid2X2,x:77,y:75,active:true,badge:6}
+];
+function NeuralCore(){return <div className="core-wrap"><div className="core-halo halo-one"/><div className="core-halo halo-two"/><div className="core-ring ring-a"/><div className="core-ring ring-b"/><div className="core"><Brain size={72} strokeWidth={1.1}/><span>J-A-R-V-I-S</span></div><div className="core-pulse"/></div>}
+function NetworkCanvas(){
+ const [selected,setSelected]=useState('Voice');
+ return <div className="network-canvas"><div className="grid-glow"/>
+ <svg className="connections" viewBox="0 0 100 100" preserveAspectRatio="none">{nodes.map((n,i)=><g key={n.name}><line x1="51" y1="48" x2={n.x} y2={n.y} className={n.active?'link link-active':'link'}/>{n.active&&<circle r=".35" className="link-particle"><animateMotion dur={(4+i%4)+'s'} repeatCount="indefinite" path={'M 51 48 L '+n.x+' '+n.y}/></circle>}</g>)}</svg>
+ <NeuralCore/>{nodes.map(({name,icon:Icon,x,y,active,badge})=><button key={name} className={'network-node '+(active?'active':'idle')+(selected===name?' selected':'')} style={{left:x+'%',top:y+'%'}} onClick={()=>setSelected(name)} aria-label={'Select '+name}><span className="node-icon"><Icon size={17}/></span>{badge&&<span className="node-badge">{badge}</span>}<span className="node-label">{name}</span></button>)}
+ <div className="network-top-left"><div className="eyebrow">NEURAL NETWORK</div><span>11 of 17 links active</span></div><div className="network-top-right"><span className="live-pill"><i/> LIVE</span><button className="activity-btn"><Activity size={13}/> Activity</button></div><div className="selected-node-note">Selected: {selected}</div><div className="network-bottom-hint">Tap to explore</div></div>;
+}
+function App(){
+ const [message,setMessage]=useState(''),[listening,setListening]=useState(false),[activeNav,setActiveNav]=useState('NETWORK');
+ return <div className="app-shell"><aside className="sidebar"><div className="brand-row"><div className="brand-mark"><Brain size={18}/></div><span className="brand-name">J-A-R-V-I-S</span><button className="sidebar-collapse"><PanelLeft size={15}/></button></div><button className="new-chat"><Plus size={15}/> NEW CONVERSATION</button><nav className="navigation">{nav.map(({label,icon:Icon})=><button key={label} className={'nav-item '+(activeNav===label?'active':'')} onClick={()=>setActiveNav(label)}><Icon size={15}/><span>{label}</span></button>)}</nav><div className="history"><div className="history-heading"><History size={13}/> HISTORY</div><button className="history-item"><span>Untitled conversation</span><small>just now</small></button><button className="history-item"><span>Hi Jarvis, thanks for being here...</span><small>20 minutes ago</small></button></div><div className="sidebar-footer"><div className="profile-avatar">D</div><div className="profile-info"><strong>Local User</strong><small>Personal workspace</small></div><ChevronDown size={14}/></div></aside>
+ <main className="main-panel"><header className="page-header"><div className="header-title">{activeNav==='NETWORK'?'Network':activeNav.charAt(0)+activeNav.slice(1).toLowerCase()}</div><div className="header-actions"><button className="icon-button"><Search size={16}/></button><button className="icon-button"><Bell size={16}/></button><button className="icon-button"><Settings2 size={16}/></button></div></header><section className="workspace"><NetworkCanvas/><div className="conversation-bar"><div className="greeting">Hi there! How can I assist you today?</div><div className={'voice-state '+(listening?'is-listening':'')}><span>{listening?'Listening':'Voice idle'}</span><AudioLines size={15}/><button className="mic-toggle" onClick={()=>setListening(!listening)} aria-label="Toggle microphone"><Mic size={15}/></button></div><form className="message-input" onSubmit={e=>{e.preventDefault();if(message.trim()){alert('Chat backend is not connected yet. UI prototype milestone.');setMessage('')}}}><button type="button" className="attach-button"><Paperclip size={16}/></button><input value={message} onChange={e=>setMessage(e.target.value)} placeholder="Type to Jarvis while you talk..."/><button className="send-button" disabled={!message.trim()} type="submit"><Send size={16}/></button></form></div></section><footer className="status-footer"><span><Circle size={7} fill="currentColor"/> UI Prototype</span><span><Zap size={12}/> Core not connected</span><span><Monitor size={12}/> Desktop-ready layout</span><span className="footer-right">J-A-R-V-I-S · 0.1.0</span></footer></main></div>;
+}
+createRoot(document.getElementById('root')).render(<App/>);
