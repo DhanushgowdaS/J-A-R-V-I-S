@@ -1,49 +1,42 @@
 # J-A-R-V-I-S
 
-**J-A-R-V-I-S** is an independent personal AI assistant project focused on natural voice interaction, contextual intelligence, useful automation, and a capable desktop experience.
+Private, independently developed personal AI assistant project.
 
-## Vision
+## Quick demo (Windows)
+1. Install Python 3.12 and Node.js 20+.
+2. Download/clone this private repository.
+3. Double-click START-JARVIS-DEMO.bat.
+4. The launcher installs/checks dependencies, starts backend and frontend, then opens the browser demo.
 
-Build a dependable assistant that can understand requests, reason over relevant context, use approved tools, and help with everyday digital work through a coherent interface.
+Keep both terminal windows open. UI: http://127.0.0.1:5173; API: http://127.0.0.1:8000.
 
-## Planned capability areas
+## Demo features
+- Neural-network visual interface
+- Chat and saved conversations
+- Settings
+- Browser-dependent voice input/output
+- Local SQLite storage and persistent memory
+- Allowlisted calculator and UTC time tools
 
-- Voice interaction: wake-word activation, speech recognition, speech synthesis, and interruptible conversations.
-- AI orchestration: provider abstraction, model selection, and graceful error handling.
-- Desktop interaction: controlled keyboard, mouse, application, and window operations.
-- Visual understanding: screen capture and interpretation of on-screen content.
-- Browser and research tools: web navigation, information gathering, and task workflows.
-- Coding support: code analysis, generation, testing, and debugging workflows.
-- Files and documents: safe file operations, document understanding, and structured outputs.
-- Memory: user-approved persistent context with clear controls.
-- Automations: reusable routines, scheduled tasks, and event-driven workflows.
-- Integrations: optional connections to external services through explicit permissions.
-- Interface: a modern desktop HUD with activity, tools, workflows, files, memory, connections, and settings.
+AI replies require provider setup in backend/.env using backend/.env.example. Without a key, setup-mode replies clearly explain that AI is not configured.
 
-## Engineering principles
-
-1. **Independent implementation:** J-A-R-V-I-S has its own identity, architecture, and code.
-2. **Modular design:** capabilities should be isolated behind clear interfaces.
-3. **Safety by design:** external actions require appropriate permissions, sensitive values stay out of source control, and potentially destructive operations should be reviewable.
-4. **Reliability:** errors, timeouts, cancellation, and recovery paths are first-class concerns.
-5. **Testability:** core logic should be testable without requiring live microphones, accounts, or external services.
-6. **Transparency:** document what is implemented, what is experimental, and what remains planned.
-
-## Repository status
-
-This repository is at its initial setup stage. Features are not considered implemented merely because they appear in the roadmap. Implementation status will be updated as code and tests are added.
-
-## Development
-
-The initial architecture and development workflow will be documented as they are established.
+## Manual setup
+Backend (Python 3.12+):
+```powershell
+cd backend
+py -3.12 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -e .
+uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+```
+Frontend:
+```powershell
+cd frontend
+npm install
+npm run dev
+```
 
 ## Security
+Provider keys stay in backend environment. Arbitrary shell/code execution is not exposed. Local DB data is git-ignored.
 
-- Never commit API keys, access tokens, passwords, private certificates, or personal data.
-- Store local secrets in environment variables or an untracked local configuration file.
-- Review third-party dependencies and licenses before adoption.
-- Keep experimental integrations disabled until explicitly configured.
-
-## License
-
-No license has been added yet. All rights are reserved by default unless a license is added.
+Project is an active demo foundation; full integrations and desktop packaging are not complete yet.
