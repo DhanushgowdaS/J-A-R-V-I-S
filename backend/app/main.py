@@ -3,7 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from .models import ChatRequest, ChatResponse
 from .core import respond, get_history, clear_history, list_history
 from .config import settings
-from .database import initialize, add_memory, list_memories, delete_memory\nfrom .tools import list_tools, execute_tool
+from .database import initialize, add_memory, list_memories, delete_memory
+from .tools import list_tools, execute_tool
 
 app = FastAPI(title="J-A-R-V-I-S API",version="0.4.0",description="Local API for the J-A-R-V-I-S personal assistant.")
 app.add_middleware(CORSMiddleware,allow_origins=["http://127.0.0.1:5173","http://localhost:5173"],allow_credentials=True,allow_methods=["GET","POST","DELETE"],allow_headers=["Content-Type","Authorization"])
