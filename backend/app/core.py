@@ -12,13 +12,17 @@ async def respond(message: str, conversation_id: str | None = None) -> dict[str,
     database.create_conversation(session_id)
     database.add_message(session_id,"user",message.strip())
     history = database.history(session_id)
+    memories = database.list_memories(limit=30)
+    memory_context = ""
+    if memories:
+        memory_context = "\n\nStored user memories (use only when relevant):\n" + "\n".join(f"- {m['content']}" for m in memories)
     provider = get_provider()
     if provider is None:
         reply = "Message received and saved. The AI provider is not configured yet. Set AI_API_KEY in the backend environment to enable model responses."
         mode = "provider_not_configured"
     else:
         try:
-            reply = await provider.generate([{"role":"system","content":SYSTEM_PROMPT},*history])
+            reply = await provider.generate([{"role":"system","content":SYSTEM_PROMPT + memory_context},*history])
             mode = "ai"
         except Exception as exc:
             reply = f"I couldn't reach the configured AI provider. Please check provider settings. ({type(exc).__name__})"
