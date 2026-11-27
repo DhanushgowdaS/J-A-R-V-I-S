@@ -2,10 +2,11 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from .models import ChatRequest, ChatResponse
 from .core import respond, get_history, clear_history
+from .config import settings
 
 app = FastAPI(
     title="J-A-R-V-I-S API",
-    version="0.2.0",
+    version="0.3.0",
     description="Local API foundation for the J-A-R-V-I-S personal assistant.",
 )
 
@@ -19,22 +20,22 @@ app.add_middleware(
 
 @app.get("/api/health", tags=["system"])
 def health_check() -> dict[str, str]:
-    return {"status": "ok", "service": "J-A-R-V-I-S API", "version": "0.2.0"}
+    return {"status": "ok", "service": "J-A-R-V-I-S API", "version": "0.3.0"}
 
 @app.get("/api", tags=["system"])
-def api_info() -> dict[str, str]:
-    return {"name": "J-A-R-V-I-S", "status": "core-foundation", "message": "Backend is running."}
+def api_info() -> dict[str, str | bool]:
+    return {"name": "J-A-R-V-I-S", "status": "core-foundation", "message": "Backend is running.", "provider_configured": bool(settings.ai_api_key)}
 
 @app.post("/api/chat", response_model=ChatResponse, tags=["assistant"])
-def chat(request: ChatRequest) -> ChatResponse:
+async def chat(request: ChatRequest) -> ChatResponse:
     if not request.message.strip():
         raise HTTPException(status_code=422, detail="Message cannot be empty.")
-    result = respond(request.message, request.conversation_id)
+    result = await respond(request.message, request.conversation_id)
     return ChatResponse(
         conversation_id=result["conversation_id"],
         reply=result["reply"],
         mode=result["mode"],
-        provider_configured=False,
+        provider_configured=bool(settings.ai_api_key),
     )
 
 @app.get("/api/conversations/{conversation_id}/history", tags=["assistant"])
