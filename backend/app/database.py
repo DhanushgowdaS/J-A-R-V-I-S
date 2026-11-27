@@ -26,6 +26,11 @@ def initialize():
             content TEXT NOT NULL, created_at TEXT NOT NULL,
             FOREIGN KEY(conversation_id) REFERENCES conversations(id) ON DELETE CASCADE)""")
         con.execute("CREATE INDEX IF NOT EXISTS idx_messages_conversation ON messages(conversation_id,id)")
+        con.execute("""CREATE TABLE IF NOT EXISTS memories (
+            id INTEGER PRIMARY KEY AUTOINCREMENT, content TEXT NOT NULL,
+            category TEXT NOT NULL DEFAULT 'general', created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL)""")
+        con.execute("CREATE INDEX IF NOT EXISTS idx_memories_category ON memories(category)")
         con.execute("PRAGMA foreign_keys=ON")
 
 def timestamp():
@@ -66,4 +71,25 @@ def delete_conversation(cid):
     with connect() as con:
         con.execute("DELETE FROM messages WHERE conversation_id=?",(cid,))
         cur=con.execute("DELETE FROM conversations WHERE id=?",(cid,))
+    return cur.rowcount>0
+
+def add_memory(content, category="general"):
+    initialize(); now=timestamp()
+    with connect() as con:
+        cur=con.execute("INSERT INTO memories(content,category,created_at,updated_at) VALUES(?,?,?,?)",(content.strip(),category.strip() or "general",now,now))
+        return cur.lastrowid
+
+def list_memories(category=None, limit=200):
+    initialize()
+    with connect() as con:
+        if category:
+            rows=con.execute("SELECT id,content,category,created_at,updated_at FROM memories WHERE category=? ORDER BY updated_at DESC LIMIT ?",(category,limit)).fetchall()
+        else:
+            rows=con.execute("SELECT id,content,category,created_at,updated_at FROM memories ORDER BY updated_at DESC LIMIT ?",(limit,)).fetchall()
+    return [dict(r) for r in rows]
+
+def delete_memory(memory_id):
+    initialize()
+    with connect() as con:
+        cur=con.execute("DELETE FROM memories WHERE id=?",(memory_id,))
     return cur.rowcount>0
