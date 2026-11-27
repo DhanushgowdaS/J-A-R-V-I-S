@@ -37,6 +37,7 @@ function SidebarPage({page,apiState,conversations,memories,tools,setActiveNav,se
  {page==='ASSISTANT'&&<><p>Backend: {apiState} | Tools: {tools.length} | Memories: {memories.length}</p><button onClick={()=>setSettingsOpen(true)}>Settings / Memory</button></>}
  {page==='ACCOUNT'&&<><input value={name} onChange={e=>setName(e.target.value)} placeholder="Display name"/><button onClick={()=>localStorage.setItem('jarvis-profile',name)}>Save locally</button><p>Local profile only.</p></>}
  </div>
+}
 function App(){
  const [message,setMessage]=useState(''),[listening,setListening]=useState(false),[activeNav,setActiveNav]=useState('NETWORK');
  const [conversationId,setConversationId]=useState(null),[messages,setMessages]=useState([]),[sending,setSending]=useState(false),[apiState,setApiState]=useState('checking'),[showMessages,setShowMessages]=useState(false);
